@@ -2,6 +2,10 @@
 
     package="event.caldroid.com.simplelauncher">
 
+    <uses-permission android:name="android.permission.CAMERA"/>
+    <uses-feature android:name="android.hardware.camera"/>
+    <uses-permission android:name="android.permission.CALL_PHONE"/>
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -12,7 +16,7 @@
 
         <activity android:name="event.caldroid.com.simplelauncher.HomeActivity"
             android:label="Simple launcher home"
-            android:theme="@android:style/Theme.Wallpaper.NoTitleBar.Fullscreen"
+            android:theme="@android:style/Theme.Holo.NoActionBar.Fullscreen"
             android:launchMode="singleTask"
             android:stateNotNeeded="true"
             >

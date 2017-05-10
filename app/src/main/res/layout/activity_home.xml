@@ -1,25 +1,56 @@
 <?xml version="1.0" encoding="utf-8"?>
-    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".HomeActivity">
+    android:orientation="horizontal"
+    android:layout_alignParentBottom="true"
+    tools:context=".HomeActivity"
+    android:background="@drawable/background">
 
-    <Button
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/apps_button"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentTop="true"
-        android:layout_marginTop="10dp"
-        android:text="Show Apps"
-        android:onClick="showApps"/>
+        android:layout_gravity="bottom">
 
-    <Button
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/grid_apps_button"
-        android:text="Menu"
-        android:onClick="gridApps"/>
+        <Button
+            android:id="@+id/button_contact"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/ic_contact"
+            android:layout_marginLeft="10dp"
+            android:onClick="contact"/>
 
-</RelativeLayout>
+        <Button
+            android:id="@+id/button_message"
+            android:background="@drawable/ic_message"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@+id/button_contact"/>
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/main_menu"
+            android:onClick="showApps"
+            android:layout_toRightOf="@+id/button_message"
+            android:background="@drawable/ic_main_menu"/>
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/button_music"
+            android:layout_toRightOf="@+id/main_menu"
+            android:background="@drawable/ic_music"
+            android:onClick="audioIntent"/>
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/button_pdf"
+            android:layout_toRightOf="@+id/button_music"
+            android:background="@drawable/ic_pdf"
+            android:onClick="pdfIntent"/>
+    </RelativeLayout>
+
+</LinearLayout>
