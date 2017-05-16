@@ -90,6 +90,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/main_menu"
+            android:onClick="displayApp"
             android:layout_toRightOf="@+id/button_message"
             android:background="@drawable/ic_main_menu"/>
 

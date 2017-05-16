@@ -36,19 +36,17 @@ public class HomeActivity extends Activity {
         viewPage = (ViewPager) findViewById(R.id.viewpager);
         viewPage.setAdapter(new CustomPageAdapter(this));
         apps = (Button) findViewById(R.id.main_menu);
-
-        apps.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent i = new Intent(HomeActivity.this, AppsListActivity.class);
-                startActivity(i);
-            }
-        });
-
     }
+
+    public void displayApp(View view){
+        Intent intent = new Intent(HomeActivity.this,AppsListActivity.class);
+        startActivity(intent);
+    }
+
     public void lockScreen(View view){
         Button lock = (Button) findViewById(R.id.button_lock);
         Settings.System.putInt(getContentResolver(),Settings.System.SCREEN_OFF_TIMEOUT,15000);
+
         lock.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -76,7 +74,6 @@ public class HomeActivity extends Activity {
                 final float normalizedposition = Math.abs(Math.abs(position) - 1);
                 page.setScaleX(normalizedposition / 2 + 0.5f);
                 page.setScaleY(normalizedposition / 2 + 0.5f);
-
             }
         });
     }
