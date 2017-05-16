@@ -1,134 +1,155 @@
 package event.caldroid.com.simplelauncher;
 
 import android.app.Activity;
+import android.app.admin.DevicePolicyManager;
+import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.hardware.Camera;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.ContactsContract;
+import android.provider.Settings;
+import android.support.v4.view.ViewPager;
 import android.view.View;
 import android.widget.Button;
-import android.widget.CompoundButton;
-import android.widget.Switch;
 
 /**
  * Created by gaurav on 09/05/17.
  */
 
-public class HomeActivity extends Activity {
+/**
+ * Simple Launcher starts when you click on home button
+ */
 
-    private Switch flashSwitch;
-    private Camera camera;
+public class HomeActivity extends Activity {
+    DevicePolicyManager devicePolicyManager;
+    ComponentName adminComponent;
+    Button apps;
+    ViewPager viewPage;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_home);
-        /*
-        flashSwitch = (Switch) findViewById(R.id.flash_intent);
+        setContentView(R.layout.main_home_activity);
 
-        flashSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+        viewPage = (ViewPager) findViewById(R.id.viewpager);
+        viewPage.setAdapter(new CustomPageAdapter(this));
+        apps = (Button) findViewById(R.id.main_menu);
+
+        apps.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                Camera.Parameters param;
-                if(isChecked){
+            public void onClick(View v) {
+                Intent i = new Intent(HomeActivity.this, AppsListActivity.class);
+                startActivity(i);
+            }
+        });
 
-                    param = camera.getParameters();
-                    param.setFlashMode(Camera.Parameters.FLASH_MODE_TORCH);
-                    camera.setParameters(param);
-                    camera.startPreview();
-                }else {
-                    param = camera.getParameters();
-                    param.setFlashMode(Camera.Parameters.FLASH_MODE_OFF);
-                    camera.setParameters(param);
-                    camera.startPreview();
+    }
+    public void lockScreen(View view){
+        Button lock = (Button) findViewById(R.id.button_lock);
+        Settings.System.putInt(getContentResolver(),Settings.System.SCREEN_OFF_TIMEOUT,15000);
+        lock.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                adminComponent = new ComponentName(HomeActivity.this, AdminReceiver.class);
+                devicePolicyManager = (DevicePolicyManager) getSystemService(Context.DEVICE_POLICY_SERVICE);
+
+                if (!devicePolicyManager.isAdminActive(adminComponent)) {
+
+                    Intent intent = new Intent(DevicePolicyManager.ACTION_ADD_DEVICE_ADMIN);
+                    intent.putExtra(DevicePolicyManager.EXTRA_DEVICE_ADMIN, adminComponent);
+                    startActivityForResult(intent, 50);
+                } else {
+                    devicePolicyManager.lockNow();
                 }
             }
         });
-                */
     }
 
-    public void showApps(View v){
-        Intent i = new Intent(this, AppsListActivity.class);
-        startActivity(i);
+    public void coverFlow(View view){
+        viewPage.setPageTransformer(false, new ViewPager.PageTransformer(){
+
+            @Override
+            public void transformPage(View page, float position) {
+
+                final float normalizedposition = Math.abs(Math.abs(position) - 1);
+                page.setScaleX(normalizedposition / 2 + 0.5f);
+                page.setScaleY(normalizedposition / 2 + 0.5f);
+
+            }
+        });
     }
 
-    public void audioIntent(View v){
+    public void scroll(View view){
+        viewPage.setPageTransformer(false, new ViewPager.PageTransformer(){
+
+            @Override
+            public void transformPage(View page, float position) {
+                page.setRotationY(position * -30);
+            }
+        });
+    }
+
+    public void contact(View view){
+        Intent intent = new Intent(Intent.ACTION_PICK);
+        intent.setType(ContactsContract.Contacts.CONTENT_TYPE);
+        if(intent.resolveActivity(getPackageManager()) != null){
+            startActivityForResult(intent,10);
+        }
+    }
+
+
+    public void audioIntent(View view){
         Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
         Uri uri = Uri.parse(Environment.getExternalStorageDirectory().getParent()+"/ext_card");
         intent.setDataAndType(uri,"audio/*");
-        startActivityForResult(intent,30);
+        startActivityForResult(intent,20);
     }
 
     public void videoIntent(View v){
         Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
         Uri uri = Uri.parse(Environment.getExternalStorageDirectory().getParent()+"/ext_card");
         intent.setDataAndType(uri,"video/*");
-        startActivityForResult(intent,20);
+        startActivityForResult(intent,30);
     }
 
-    public void pdfIntent(View v){
+    public void pdfIntent(View view){
         Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
-        Uri uri = Uri.parse(Environment.getExternalStorageDirectory().getParent()+"/ext_card");
+        Uri uri = Uri.parse(Environment.getExternalStorageDirectory().getParent()+"/ext.card");
         intent.setDataAndType(uri,"pdf/*");
-        startActivityForResult(intent,10);
-    }
-
-    public void gameIntent(View v){
-        Intent i;
-        PackageManager manager = getPackageManager();
-        try {
-            i = manager.getLaunchIntentForPackage("com.king.candycrushsaga");
-            if (i == null)
-                throw new PackageManager.NameNotFoundException();
-            i.addCategory(Intent.CATEGORY_LAUNCHER);
-            startActivity(i);
-        } catch (PackageManager.NameNotFoundException e) {
-
-        }
-    }
-
-
-    public void contact(View v){
-        Intent intent = new Intent(Intent.ACTION_PICK);
-        intent.setType(ContactsContract.Contacts.CONTENT_TYPE);
-        if(intent.resolveActivity(getPackageManager()) != null){
-            startActivityForResult(intent,40);
-        }
+        startActivityForResult(intent,40);
     }
 
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data){
-
-        if (resultCode == RESULT_OK && requestCode == 10){
-            Uri uriPdf = data.getData();
-            Intent pdfIntent = new Intent(Intent.ACTION_VIEW);
-            pdfIntent.setDataAndType(uriPdf,"pdf/*");
-            startActivity(pdfIntent);
-        }
-
-        if (resultCode == RESULT_OK && requestCode == 20){
-            Uri uriVideo = data.getData();
-            Intent tostart = new Intent(Intent.ACTION_VIEW);
-            tostart.setDataAndType(uriVideo,"video/*");
-            startActivity(tostart);
-
-        }
-
-        if(resultCode == RESULT_OK && requestCode== 30){
-            Uri uriVidio = data.getData();
-            Intent videoIntent = new Intent(Intent.ACTION_VIEW);
-            videoIntent.setDataAndType(uriVidio,"audio/*");
-            startActivity(videoIntent);
-        }
-
-        if(resultCode == RESULT_OK && requestCode == 40){
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if(requestCode == 10 && resultCode == RESULT_OK){
             Uri contactUri = data.getData();
             Intent contactIntent = new Intent(Intent.ACTION_CALL);
             contactIntent.setData(contactUri);
             startActivity(contactIntent);
         }
+
+        if(resultCode == RESULT_OK && requestCode == 20){
+            Uri audioUri = data.getData();
+            Intent audioIntent = new Intent(Intent.ACTION_VIEW);
+            audioIntent.setDataAndType(audioUri,"audio/*");
+            startActivity(audioIntent);
+        }
+
+        if(requestCode == 30 && resultCode == RESULT_OK){
+            Uri videoUri = data.getData();
+            Intent videoIntent = new Intent(Intent.ACTION_VIEW);
+            videoIntent.setDataAndType(videoUri,"video/*");
+            startActivity(videoIntent);
+        }
+
+        if(requestCode ==  40 && resultCode == RESULT_OK){
+            Uri pdfUri = data.getData();
+            Intent pdfIntent = new Intent(Intent.ACTION_VIEW);
+            pdfIntent.setDataAndType(pdfUri,"pdf/*");
+            startActivity(pdfIntent);
+        }
+
     }
 }

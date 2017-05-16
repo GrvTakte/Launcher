@@ -19,6 +19,9 @@ This is the simple launcher application which is use as a launcher for android d
 * acticity_home.xml file is nothing but the UI for your home screen.
 * To create activity_home.xml file right click on layout folder present in src/res/ -> choose resource layout file -> write the name for resource file -> click on create button.
 
+### Steps to create AppDetail class:-
+* Right click on src folder -> select new java class -> enter the name for java class, Here we declare name as AppDetail.java -> click on create button.
+
 
 
 
